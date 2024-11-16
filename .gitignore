@@ -1,0 +1,39 @@
+# Python
+*.pyc
+*.pyo
+__pycache__/
+
+# Virtualenv
+venv/
+*.venv/
+ENV/
+env/
+.venv/
+.env
+.env.*
+
+# Logs
+*.log
+
+# Static and media files
+/staticfiles/
+/media/
+
+# Local SQLite
+*.sqlite3
+
+# Django
+*.pid
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Pip
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Docker
+docker-compose.override.yml
