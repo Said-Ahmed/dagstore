@@ -77,5 +77,7 @@ class Cart:
     def save(self):
         self.session.modified = True
 
+# Здесь конец
+
 
 
