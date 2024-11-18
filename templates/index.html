@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dagstore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        /* Основной контейнер для содержимого и корзины */
+        .main-container {
+            display: flex;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #ffcc00;
+            padding: 10px 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .logo i {
+            font-size: 36px;
+            color: #333;
+            margin-right: 10px;
+        }
+
+        .navbar .logo span {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .navbar .search-bar {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            max-width: 500px;
+            margin: 0 20px;
+        }
+
+        .navbar .search-bar input {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px 0 0 8px;
+            outline: none;
+        }
+
+        .navbar .search-bar button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 0 8px 8px 0;
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar .search-bar button:hover {
+            background-color: #555;
+        }
+
+        .navbar .menu {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .menu div {
+            display: flex;
+            align-items: center;
+            margin: 0 10px;
+            font-size: 16px;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .navbar .menu div i {
+            margin-right: 5px;
+            font-size: 18px;
+        }
+
+        .navbar .menu div:hover {
+            text-decoration: underline;
+        }
+
+        .content {
+            flex: 3;
+            margin-top: 70px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        #product-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .product {
+            background: #fff;
+            border: 1px solid #eaeaea;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .product:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .product img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .product-details {
+            padding: 15px;
+            text-align: left;
+        }
+
+        .product-price {
+            font-size: 18px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 8px;
+        }
+
+        .product-name {
+            font-size: 16px;
+            color: #333;
+            margin: 5px 0;
+        }
+
+        .product-category {
+            font-size: 14px;
+            color: #888;
+            margin: 3px 0 10px 0;
+        }
+
+        .product button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: block;
+            margin: 15px auto 0 auto;
+            width: 80%;
+            text-align: center;
+        }
+
+        .product button:hover {
+            background-color: #0056b3;
+        }
+
+        .cart {
+            flex: 1;
+            background-color: #fff;
+            border-left: 1px solid #eaeaea;
+            height: calc(100vh - 70px);
+            position: sticky;
+            top: 70px;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .cart h2 {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .cart-total {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+            border-top: 1px solid #eaeaea;
+            padding-top: 10px;
+        }
+
+        .cart-item {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .cart-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+
+        .cart-item-details {
+            display: flex;
+        }
+
+        .cart-item-details div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-item-name {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .cart-item-quantity,
+        .cart-item-price,
+        .cart-item-total-price {
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигационная панель -->
+    <div class="navbar">
+        <div class="logo">
+            <i class="fas fa-store"></i>
+            <span>Dagstore</span>
+        </div>
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Найти товары...">
+            <button id="search-button">Найти</button>
+        </div>
+        <div class="menu">
+            <div><i class="fas fa-th-large"></i>Каталог</div>
+            <div><i class="fas fa-heart"></i>Избранное</div>
+            <div><i class="fas fa-shopping-cart"></i>Корзина</div>
+            <div><i class="fas fa-user"></i>Профиль</div>
+        </div>
+    </div>
+
+    <!-- Основной контейнер -->
+    <div class="main-container">
+        <!-- Основное содержимое -->
+        <div class="content">
+            <h1>Каталог товаров</h1>
+            <div id="product-list"></div>
+        </div>
+
+        <!-- Корзина -->
+        <div class="cart">
+            <h2>Корзина</h2>
+            <div class="cart-items"></div>
+            <div class="cart-total">Итого: 0 ₽</div>
+        </div>
+    </div>
+
+    <script>
+        const baseURL = "http://127.0.0.1:8000";
+
+        async function fetchProducts() {
+            try {
+                const response = await fetch(`${baseURL}/products/`);
+                const data = await response.json();
+                const productList = document.getElementById("product-list");
+
+                if (data.response && data.response.length > 0) {
+                    data.response.forEach(product => {
+                        const productDiv = document.createElement("div");
+                        productDiv.className = "product";
+
+                        productDiv.innerHTML = `
+                            <img src="${baseURL}${product.image}" alt="${product.name}" />
+                            <div class="product-details">
+                                <div class="product-price">${product.price} ₽</div>
+                                <div class="product-name">${product.name}</div>
+                                <div class="product-category">${product.category}</div>
+                                <button class="add-to-cart" data-uuid="${product.uuid}">+ Добавить</button>
+                            </div>
+                        `;
+                        productList.appendChild(productDiv);
+                    });
+
+                    attachAddToCartHandlers();
+                }
+            } catch (error) {
+                console.error("Ошибка загрузки товаров:", error);
+            }
+        }
+
+        async function fetchCart() {
+            try {
+                const response = await fetch(`${baseURL}/cart/`);
+                const data = await response.json();
+                const cartItemsDiv = document.querySelector('.cart-items');
+                cartItemsDiv.innerHTML = ''; // Очищаем предыдущие элементы корзины
+
+                if (data.cart && data.cart.length > 0) {
+                    data.cart.forEach(item => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'cart-item';
+
+                        itemDiv.innerHTML = `
+                            <div class="cart-item-details">
+                                <img src="${baseURL}${item.product.image}" alt="${item.product.name}" />
+                                <div>
+                                    <div class="cart-item-name">${item.product.name}</div>
+                                    <div class="cart-item-quantity">Количество: ${item.quantity}</div>
+                                    <div class="cart-item-price">Цена: ${item.price} ₽</div>
+                                    <div class="cart-item-total-price">Сумма: ${item.total_price} ₽</div>
+                                </div>
+                            </div>
+                        `;
+
+                        cartItemsDiv.appendChild(itemDiv);
+                    });
+
+                    const cartTotalDiv = document.querySelector('.cart-total');
+                    cartTotalDiv.textContent = `Итого: ${data.total_sum} ₽`;
+                } else {
+                    cartItemsDiv.innerHTML = '<p>Корзина пуста</p>';
+                    const cartTotalDiv = document.querySelector('.cart-total');
+                    cartTotalDiv.textContent = 'Итого: 0 ₽';
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки корзины:', error);
+            }
+        }
+
+        async function addToCart(uuid, button) {
+            try {
+                const response = await fetch(`${baseURL}/cart/add/${uuid}/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Ошибка при добавлении в корзину');
+                }
+
+                const data = await response.json();
+
+                // Обновляем корзину
+                fetchCart();
+
+            } catch (error) {
+                console.error("Ошибка при добавлении в корзину:", error);
+            }
+        }
+
+        function attachAddToCartHandlers() {
+            const buttons = document.querySelectorAll('.add-to-cart');
+            buttons.forEach(button => {
+                button.addEventListener('click', async () => {
+                    const uuid = button.getAttribute('data-uuid');
+                    await addToCart(uuid, button);
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchProducts();
+            fetchCart();
+        });
+    </script>
+</body>
+</html>

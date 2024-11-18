@@ -13,6 +13,7 @@ class CartApiViewSet(viewsets.ViewSet):
     def list(self, request, *args, **kwargs):
         cart = Cart(request)
         serializer_data = CartListSerializer(cart, many=True)
+        print(serializer_data.data)
         return Response({'cart': serializer_data.data, 'total_sum': cart.get_total_price()})
 
     def create(self, request, product_uuid, *args, **kwargs):
