@@ -1,83 +1,83 @@
+import redis
+from django.conf import settings
 from decimal import Decimal
-
+from django.core.exceptions import ObjectDoesNotExist
 from store.models import Product
+import logging
 
+logger = logging.getLogger(__name__)
 
-class Cart:
-    def __init__(self, request):
-        self.session = request.session
-        cart = self.session.get('cart')
+redis_instance = redis.StrictRedis.from_url(settings.CACHES['default']['LOCATION'])
 
-        if not cart:
-            cart = self.session['cart'] = {}
+def get_cart_key(session_id):
+    return f"cart:{session_id}"
 
-        self.cart = cart
+CART_TTL = 3600 * 24  # 24 часа
 
-    def add(self, product, quantity=1, override_quantity=False):
-        product_uuid = str(product.uuid)
+def get_cart(session_id):
+    cart_key = get_cart_key(session_id)
+    cart_items = redis_instance.hgetall(cart_key)
 
-        if product_uuid in self.cart:
+    result = []
+    total_sum = Decimal(0)
 
-            if override_quantity:
-                self.cart[product_uuid]['quantity'] = quantity
-            else:
-                self.cart[product_uuid]['quantity'] += quantity
+    for product_uuid, quantity in cart_items.items():
+        try:
+            quantity = int(quantity)
+            product = Product.objects.get(uuid=product_uuid.decode())  # Декодируем из bytes
+            price = product.price
+            total_price = price * quantity
 
-        else:
-            self.cart[product_uuid] = {'quantity': 1, 'price': str(product.price)}
+            result.append({
+                "quantity": quantity,
+                "product": {
+                    "uuid": str(product.uuid),
+                    "name": product.name,
+                    "image": product.image.url,
+                    "price": f"{price:.2f}",
+                    "category": product.category.name
+                },
+                "price": f"{price:.2f}",
+                "total_price": f"{total_price:.2f}",
+            })
 
-        self.save()
+            total_sum += total_price
+        except ObjectDoesNotExist:
+            continue  # Если продукт не найден, просто пропускаем
 
-        return self.cart[product_uuid]['quantity']
+    return {
+        "cart": result,
+        "total_sum": float(total_sum)
+    }
 
-    def remove(self, product, override_quantity=False):
-        product_uuid = str(product.uuid)
+def remove_from_cart(session_id, product_uuid):
+    try:
+        cart_key = get_cart_key(session_id)
+        redis_instance.hincrby(cart_key, str(product_uuid), -1)  # -1 уменьшает количество на 1
+        current_quantity = redis_instance.hget(cart_key, str(product_uuid))
 
-        if product_uuid in self.cart:
+        if current_quantity is None or int(current_quantity) <= 0:
+            redis_instance.hdel(cart_key, str(product_uuid))
+            current_quantity = 0
 
-            if override_quantity:
-                self.cart.pop(product_uuid)
+        return int(current_quantity)
+    except Exception as e:
+        logger.error(f"Failed to remove product {product_uuid} to cart: {e}")
+        raise
 
-            elif self.cart[product_uuid]['quantity'] > 1:
-                self.cart[product_uuid]['quantity'] -= 1
-            else:
-                self.cart.pop(product_uuid)
+def add_to_cart(session_id, product_uuid):
+    try:
+        cart_key = get_cart_key(session_id)
+        redis_instance.hincrby(cart_key, str(product_uuid))
+        redis_instance.expire(cart_key, 3600 * 24)
+        current_quantity = redis_instance.hget(cart_key, str(product_uuid))
 
-        self.save()
+        return int(current_quantity)
+    except Exception as e:
+        logger.error(f"Failed to add product {product_uuid} to cart: {e}")
+        raise
 
-        return self.cart[product_uuid]['quantity'] if product_uuid in self.cart else None
-
-    def __iter__(self):
-        product_uuids = self.cart.keys()
-        products = Product.objects.filter(
-            uuid__in=product_uuids
-        )
-        cart = self.cart.copy()
-
-        for product in products:
-            cart[str(product.uuid)]['product'] = product
-
-        for item in cart.values():
-            item['price'] = Decimal(item['price'])
-            item['total_price'] = item['price'] * item['quantity']
-
-            yield item
-
-    def __len__(self):
-        return sum(item['quantity'] for item in self.cart.values())
-
-    def get_total_price(self):
-        return sum(Decimal(item['price']) * item['quantity']
-                   for item in self.cart.values())
-
-    def clear(self):
-        del self.session['cart']
-        self.save()
-
-    def save(self):
-        self.session.modified = True
-
-# Здесь конец
-
-
+def clear_cart(session_id):
+    cart_key = get_cart_key(session_id)
+    redis_instance.delete(cart_key)
 

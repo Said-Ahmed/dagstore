@@ -4,19 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dagstore</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- Подключение современного шрифта Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Обновление Font Awesome до последней версии -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Inter', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f9f9f9;
+            background-color: #f7f7f7;
         }
 
         /* Основной контейнер для содержимого и корзины */
         .main-container {
             display: flex;
+            margin-top: 70px; /* Отступ от навигационной панели */
         }
 
         .navbar {
@@ -28,9 +31,9 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background-color: #ffcc00;
+            background-color: #fff;
             padding: 10px 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .navbar .logo {
@@ -39,8 +42,8 @@
         }
 
         .navbar .logo i {
-            font-size: 36px;
-            color: #333;
+            font-size: 28px;
+            color: #007bff;
             margin-right: 10px;
         }
 
@@ -56,30 +59,26 @@
             flex-grow: 1;
             max-width: 500px;
             margin: 0 20px;
+            background-color: #f1f3f5;
+            border-radius: 8px;
+            padding: 5px 10px;
         }
 
         .navbar .search-bar input {
             flex-grow: 1;
-            padding: 10px;
+            padding: 8px;
             font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 8px 0 0 8px;
+            border: none;
+            background-color: transparent;
             outline: none;
         }
 
         .navbar .search-bar button {
-            padding: 10px 20px;
-            font-size: 16px;
             border: none;
-            border-radius: 0 8px 8px 0;
-            background-color: #333;
-            color: white;
+            background-color: transparent;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .navbar .search-bar button:hover {
-            background-color: #555;
+            font-size: 18px;
+            color: #555;
         }
 
         .navbar .menu {
@@ -91,61 +90,68 @@
             display: flex;
             align-items: center;
             margin: 0 10px;
-            font-size: 16px;
+            font-size: 20px;
             color: #333;
             cursor: pointer;
         }
 
         .navbar .menu div i {
-            margin-right: 5px;
-            font-size: 18px;
+            font-size: 24px;
+            color: #333;
         }
 
         .navbar .menu div:hover {
-            text-decoration: underline;
+            color: #007bff;
         }
 
         .content {
             flex: 3;
-            margin-top: 70px;
             padding: 20px;
             overflow-y: auto;
         }
 
+        h1 {
+            color: #333;
+        }
+
         #product-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 20px;
         }
 
         .product {
             background: #fff;
             border: 1px solid #eaeaea;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             transition: box-shadow 0.3s ease, transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
         }
 
         .product:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
         .product img {
             width: 100%;
-            height: 150px;
+            height: 180px;
             object-fit: cover;
-            border-bottom: 1px solid #eaeaea;
         }
 
         .product-details {
             padding: 15px;
             text-align: left;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .product-price {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             color: #000;
             margin-bottom: 8px;
@@ -155,12 +161,13 @@
             font-size: 16px;
             color: #333;
             margin: 5px 0;
+            flex-grow: 1;
         }
 
         .product-category {
             font-size: 14px;
             color: #888;
-            margin: 3px 0 10px 0;
+            margin-bottom: 10px;
         }
 
         .product button {
@@ -168,13 +175,11 @@
             color: #fff;
             border: none;
             border-radius: 8px;
-            padding: 10px 20px;
+            padding: 10px;
             font-size: 14px;
             cursor: pointer;
             transition: background-color 0.3s ease;
-            display: block;
-            margin: 15px auto 0 auto;
-            width: 80%;
+            width: 100%;
             text-align: center;
         }
 
@@ -186,19 +191,42 @@
             flex: 1;
             background-color: #fff;
             border-left: 1px solid #eaeaea;
-            height: calc(100vh - 70px);
-            position: sticky;
-            top: 70px;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
             display: flex;
             flex-direction: column;
             padding: 20px;
+            margin-left: 70px; /* Отступ от левого края */
+            margin-right: 30px; /* Добавленный отступ справа */
+            margin-top: 35px; /* Отступ сверху от навигационной панели */
+            max-height: calc(100vh - 70px - 35px); /* Высота корзины до конца экрана */
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
         .cart h2 {
             font-size: 20px;
             font-weight: bold;
-            margin-bottom: 20px;
-            text-align: center;
+            margin: 0;
+            text-align: left;
+        }
+
+        .clear-cart {
+            background: none;
+            border: none;
+            color: #007bff;
+            cursor: pointer;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .clear-cart:hover {
+            color: #ff6b6b;
         }
 
         .cart-items {
@@ -216,8 +244,12 @@
         }
 
         .cart-item {
+            background-color: #f9f9f9;
+            border-radius: 12px;
+            padding: 10px;
             display: flex;
             margin-bottom: 15px;
+            align-items: center;
         }
 
         .cart-item img {
@@ -225,15 +257,13 @@
             height: 60px;
             object-fit: cover;
             margin-right: 10px;
+            border-radius: 8px;
         }
 
         .cart-item-details {
             display: flex;
-        }
-
-        .cart-item-details div {
-            display: flex;
             flex-direction: column;
+            flex-grow: 1;
         }
 
         .cart-item-name {
@@ -247,24 +277,38 @@
             font-size: 14px;
             color: #555;
         }
+
+        .remove-from-cart {
+            background-color: #ff4d4d;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            align-self: flex-start;
+            margin-top: 10px;
+        }
+
+        .remove-from-cart:hover {
+            background-color: #cc0000;
+        }
     </style>
 </head>
 <body>
     <!-- Навигационная панель -->
     <div class="navbar">
         <div class="logo">
-            <i class="fas fa-store"></i>
+            <i class="fas fa-shopping-bag"></i>
             <span>Dagstore</span>
         </div>
         <div class="search-bar">
             <input type="text" id="search-input" placeholder="Найти товары...">
-            <button id="search-button">Найти</button>
+            <button id="search-button"><i class="fas fa-search"></i></button>
         </div>
         <div class="menu">
-            <div><i class="fas fa-th-large"></i>Каталог</div>
-            <div><i class="fas fa-heart"></i>Избранное</div>
-            <div><i class="fas fa-shopping-cart"></i>Корзина</div>
-            <div><i class="fas fa-user"></i>Профиль</div>
+            <div><i class="fas fa-bell"></i></div>
+            <div><i class="fas fa-user-circle"></i></div>
         </div>
     </div>
 
@@ -278,7 +322,10 @@
 
         <!-- Корзина -->
         <div class="cart">
-            <h2>Корзина</h2>
+            <div class="cart-header">
+                <h2>Корзина</h2>
+                <button class="clear-cart">Очистить</button>
+            </div>
             <div class="cart-items"></div>
             <div class="cart-total">Итого: 0 ₽</div>
         </div>
@@ -286,6 +333,16 @@
 
     <script>
         const baseURL = "http://127.0.0.1:8000";
+
+        const state = {};
+        function initializeSession() {
+            let sessionId = localStorage.getItem('session_id');
+            if (!sessionId) {
+                sessionId = Math.random().toString(36).substring(2);
+                localStorage.setItem('session_id', sessionId);
+            }
+            state.sessionId = sessionId;
+        }
 
         async function fetchProducts() {
             try {
@@ -304,7 +361,7 @@
                                 <div class="product-price">${product.price} ₽</div>
                                 <div class="product-name">${product.name}</div>
                                 <div class="product-category">${product.category}</div>
-                                <button class="add-to-cart" data-uuid="${product.uuid}">+ Добавить</button>
+                                <button class="add-to-cart" data-uuid="${product.uuid}">+ Добавить в корзину</button>
                             </div>
                         `;
                         productList.appendChild(productDiv);
@@ -317,12 +374,43 @@
             }
         }
 
+        function attachAddToCartHandlers() {
+            const addToCartButtons = document.querySelectorAll(".add-to-cart");
+
+            addToCartButtons.forEach(button => {
+                button.addEventListener("click", () => {
+                    const productUUID = button.getAttribute("data-uuid");
+                    addToCart(productUUID);
+                });
+            });
+        }
+
+        async function addToCart(uuid) {
+            try {
+                const response = await fetch(`${baseURL}/cart/add/${uuid}/?session_id=${state.sessionId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({}),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Ошибка при добавлении в корзину');
+                }
+
+                fetchCart();
+            } catch (error) {
+                console.error("Ошибка при добавлении в корзину:", error);
+            }
+        }
+
         async function fetchCart() {
             try {
-                const response = await fetch(`${baseURL}/cart/`);
+                const response = await fetch(`${baseURL}/cart/?session_id=${state.sessionId}`);
                 const data = await response.json();
                 const cartItemsDiv = document.querySelector('.cart-items');
-                cartItemsDiv.innerHTML = ''; // Очищаем предыдущие элементы корзины
+                cartItemsDiv.innerHTML = '';
 
                 if (data.cart && data.cart.length > 0) {
                     data.cart.forEach(item => {
@@ -330,14 +418,13 @@
                         itemDiv.className = 'cart-item';
 
                         itemDiv.innerHTML = `
+                            <img src="${baseURL}${item.product.image}" alt="${item.product.name}" />
                             <div class="cart-item-details">
-                                <img src="${baseURL}${item.product.image}" alt="${item.product.name}" />
-                                <div>
-                                    <div class="cart-item-name">${item.product.name}</div>
-                                    <div class="cart-item-quantity">Количество: ${item.quantity}</div>
-                                    <div class="cart-item-price">Цена: ${item.price} ₽</div>
-                                    <div class="cart-item-total-price">Сумма: ${item.total_price} ₽</div>
-                                </div>
+                                <div class="cart-item-name">${item.product.name}</div>
+                                <div class="cart-item-quantity">Количество: ${item.quantity}</div>
+                                <div class="cart-item-price">Цена: ${item.price} ₽</div>
+                                <div class="cart-item-total-price">Сумма: ${item.total_price} ₽</div>
+                                <button class="remove-from-cart" data-uuid="${item.product.uuid}">Удалить</button>
                             </div>
                         `;
 
@@ -346,6 +433,8 @@
 
                     const cartTotalDiv = document.querySelector('.cart-total');
                     cartTotalDiv.textContent = `Итого: ${data.total_sum} ₽`;
+
+                    attachRemoveHandlers();
                 } else {
                     cartItemsDiv.innerHTML = '<p>Корзина пуста</p>';
                     const cartTotalDiv = document.querySelector('.cart-total');
@@ -356,38 +445,57 @@
             }
         }
 
-        async function addToCart(uuid, button) {
-            try {
-                const response = await fetch(`${baseURL}/cart/add/${uuid}/`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                });
+        function attachRemoveHandlers() {
+            const removeButtons = document.querySelectorAll('.remove-from-cart');
 
-                if (!response.ok) {
-                    throw new Error('Ошибка при добавлении в корзину');
-                }
-
-                const data = await response.json();
-
-                // Обновляем корзину
-                fetchCart();
-
-            } catch (error) {
-                console.error("Ошибка при добавлении в корзину:", error);
-            }
-        }
-
-        function attachAddToCartHandlers() {
-            const buttons = document.querySelectorAll('.add-to-cart');
-            buttons.forEach(button => {
-                button.addEventListener('click', async () => {
-                    const uuid = button.getAttribute('data-uuid');
-                    await addToCart(uuid, button);
+            removeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const productUUID = button.getAttribute('data-uuid');
+                    removeFromCart(productUUID);
                 });
             });
         }
 
+        async function removeFromCart(productUUID) {
+            try {
+                const response = await fetch(`${baseURL}/cart/remove/${productUUID}/?session_id=${state.sessionId}`, {
+                    method: 'DELETE',
+                });
+
+                if (!response.ok) {
+                    throw new Error('Ошибка при удалении продукта из корзины');
+                }
+
+                const data = await response.json();
+                console.log(data.message);
+
+                fetchCart();
+            } catch (error) {
+                console.error('Ошибка при удалении продукта из корзины:', error);
+            }
+        }
+
+        // Функция для очистки корзины
+        document.querySelector('.clear-cart').addEventListener('click', clearCart);
+
+        async function clearCart() {
+            try {
+                const response = await fetch(`${baseURL}/cart/clear/?session_id=${state.sessionId}`, {
+                    method: 'DELETE',
+                });
+
+                if (!response.ok) {
+                    throw new Error('Ошибка при очистке корзины');
+                }
+
+                fetchCart();
+            } catch (error) {
+                console.error('Ошибка при очистке корзины:', error);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            initializeSession();
             fetchProducts();
             fetchCart();
         });

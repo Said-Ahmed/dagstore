@@ -1,48 +1,67 @@
-from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework import status
+from .cart import get_cart, add_to_cart, remove_from_cart, clear_cart
 
-from .cart import Cart
-from .serializers import CartAddProductSerializer, CartListSerializer
-from store.models import Product
 
 class CartApiViewSet(viewsets.ViewSet):
 
     def list(self, request, *args, **kwargs):
-        cart = Cart(request)
-        serializer_data = CartListSerializer(cart, many=True)
-        print(serializer_data.data)
-        return Response({'cart': serializer_data.data, 'total_sum': cart.get_total_price()})
+        session_id = request.GET.get('session_id')
+        if not session_id:
+            return JsonResponse(
+                {
+                    "cart": [],
+                    "total_sum": 0.0
+                }
+            )
+        cart_data = get_cart(session_id)
+        return JsonResponse(cart_data)
 
     def create(self, request, product_uuid, *args, **kwargs):
-        cart = Cart(request)
-        product = get_object_or_404(Product, uuid=product_uuid)
-        serializer = CartAddProductSerializer(data=request.POST)
-        if serializer.is_valid():
-            serializer_data = serializer.validated_data
-            quantity = cart.add(
-                product=product,
-                quantity=serializer_data.get('quantity')
+        session_id = request.GET.get('session_id')
+        if not session_id:
+            return JsonResponse(
+                {
+                    "error": "Session ID is missing"
+                }, status=400
             )
-            return Response({'quantity': quantity}, status=status.HTTP_201_CREATED)
+        current_quantity = add_to_cart(session_id, product_uuid)
+        return JsonResponse(
+            {
+                "message": "Product added to cart", "current_quantity": current_quantity
+            }
+        )
 
     def destroy(self, request, product_uuid, *args, **kwargs):
-        cart = Cart(request)
-        product = get_object_or_404(Product, uuid=product_uuid)
-        serializer = CartAddProductSerializer(data=request.POST)
-
-        if serializer.is_valid():
-            serializer_data = serializer.validated_data
-            quantity = cart.remove(product=product, override_quantity=serializer_data.get('override_quantity'))
-            return Response({'quantity': quantity}, status=status.HTTP_204_NO_CONTENT)
-
+        session_id = request.GET.get('session_id')
+        if not session_id:
+            return JsonResponse(
+                {
+                    "error": "Session ID is missing"
+                }, status=400
+            )
+        current_quantity = remove_from_cart(session_id, product_uuid)
+        return JsonResponse(
+            {
+                "message": "Product removed from cart", "current_quantity": current_quantity
+             }
+        )
 
     @action(detail=False, methods=['delete'], url_path='clear')
     def clear_cart(self, request):
-        cart = Cart(request)
-        cart.clear()
-        return Response({'status': 'Cart clear'}, status=status.HTTP_200_OK)
+        session_id = request.GET.get('session_id')
+        if not session_id:
+            return JsonResponse(
+                {
+                "error": "Session ID is missing"
+            }, status=400
+            )
+        clear_cart(session_id)
+        return JsonResponse(
+            {
+                "message": "Cart cleared"
+            }
+        )
 
 
