@@ -45,6 +45,16 @@ class Product(models.Model):
     available = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    weight = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+    price_per_unit = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+    )
 
     def get_absolute_url(self):
         return reverse('store:product_detail',

@@ -20,7 +20,6 @@ env/
 /media/
 
 # Local SQLite
-*.sqlite3
 
 # Django
 *.pid

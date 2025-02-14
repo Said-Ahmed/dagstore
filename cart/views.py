@@ -5,7 +5,6 @@ from .cart import get_cart, add_to_cart, remove_from_cart, clear_cart
 
 
 class CartApiViewSet(viewsets.ViewSet):
-
     def list(self, request, *args, **kwargs):
         session_id = request.GET.get('session_id')
         if not session_id:

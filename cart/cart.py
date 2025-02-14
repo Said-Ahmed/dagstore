@@ -34,6 +34,8 @@ def get_cart(session_id):
                     "uuid": str(product.uuid),
                     "name": product.name,
                     "image": product.image.url,
+                    "weight": product.weight,
+                    "price_per_unit": product.price_per_unit * quantity,
                     "price": f"{price:.2f}",
                     "category": product.category.name
                 },
