@@ -10,10 +10,16 @@ class ProductApiViewSet(viewsets.ViewSet):
         products = Product.objects.filter(available=True)
 
         if category_slug:
-            category = get_object_or_404(Category,slug=category_slug)
-            products = products.filter(category=category)
-        serializer = ProductListSerializer(products, many=True)
+            try:
+                category = Category.objects.get(slug=category_slug)
+                products = products.filter(category=category)
+            except Category.DoesNotExist:
+                return Response(
+                    {"error": "Category not found"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
 
+        serializer = ProductListSerializer(products, many=True)
         return Response(
             {
                 'response': serializer.data

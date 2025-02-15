@@ -7,7 +7,7 @@ class ProductListSerializer(serializers.ModelSerializer):
     category = serializers.StringRelatedField(read_only=True)
     class Meta:
         model = Product
-        fields = ['uuid', 'name', 'image', 'price', 'category', 'weight', 'price_per_unit']
+        fields = ['uuid', 'name', 'image', 'price', 'category', 'slug', 'weight', 'price_per_unit']
 
 
 class ProductDetailSerializer(serializers.ModelSerializer):
