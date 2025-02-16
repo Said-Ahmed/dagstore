@@ -10,5 +10,19 @@ services:
       - redis_data:/data
     restart: always
 
+  rabbitmq:
+    image: rabbitmq:3.11-management-alpine
+    container_name: my_rabbitmq
+    ports:
+      - "5672:5672"  # Порт для AMQP (брокер сообщений)
+      - "15672:15672"  # Порт для веб-интерфейса управления
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: always
+
 volumes:
   redis_data:
+  rabbitmq_data:

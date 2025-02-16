@@ -6,6 +6,8 @@ from cart.cart import get_cart, clear_cart
 from store.models import Product
 from .models import OrderItem
 from .serializers import OrderCreateSerializer
+from .tasks import order_created
+
 
 class OrderApiView(viewsets.ViewSet):
     def create(self, request):
@@ -50,6 +52,8 @@ class OrderApiView(viewsets.ViewSet):
                 OrderItem.objects.bulk_create(order_items)
 
             clear_cart(session_id)
+            order_created.delay(order.id)
+            request.session['order_id'] = order.id
 
             return Response(
                 {"response": serializer.data},

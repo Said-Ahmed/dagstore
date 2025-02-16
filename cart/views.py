@@ -44,7 +44,7 @@ class CartApiViewSet(viewsets.ViewSet):
         return JsonResponse(
             {
                 "message": "Product removed from cart", "current_quantity": current_quantity
-             }
+            }
         )
 
     @action(detail=False, methods=['delete'], url_path='clear')
@@ -53,8 +53,8 @@ class CartApiViewSet(viewsets.ViewSet):
         if not session_id:
             return JsonResponse(
                 {
-                "error": "Session ID is missing"
-            }, status=400
+                    "error": "Session ID is missing"
+                }, status=400
             )
         clear_cart(session_id)
         return JsonResponse(

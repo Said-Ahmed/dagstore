@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 
+from django.conf.global_settings import EMAIL_HOST_PASSWORD, EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, EMAIL_USE_SSL, \
+    DEFAULT_FROM_EMAIL, SERVER_EMAIL
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -43,6 +46,7 @@ INSTALLED_APPS = [
     'store',
     'cart',
     'orders',
+    'payment',
 ]
 
 
@@ -141,3 +145,25 @@ CACHES = {
         'KEY_PREFIX': 'cart',
     }
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'said-ahmedkurbanov@yandex.ru'
+EMAIL_HOST_PASSWORD = 'jsfqyjktfdyvzdif'
+EMAIL_USE_SSL = True
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = EMAIL_HOST_USER
+EMAIL_ADMIN = EMAIL_HOST_USER
+
+
+CELERY_BROKER_URL = 'amqp://admin:admin123@localhost:5672/'
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51Qt7kORiYyj7g4UzlhKRXs5U8EOL5DhXJHtOx215hhE8aEaIaKK6Lf9zxcoQ3WOwRzAEnSCV1szHKGygS3oPBxw900vlMhhqRJ'
+STRIPE_SECRET_KEY = 'sk_test_51Qt7kORiYyj7g4UzkQE4faLxLvyV48cqzcFOjKP7zDC1LTaEat4k53kSS7PzMulxeJIOH7yLdFwhQPFKRv7fmloZ00Kr1d2Ors'
+STRIPE_API_VERSION = '2022-08-01'
+
