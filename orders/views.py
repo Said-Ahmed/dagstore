@@ -12,7 +12,7 @@ from .tasks import order_created
 class OrderApiView(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         session_id = request.GET.get('session_id')
-        cart = get_cart(session_id).get('cart', [])
+        cart = get_cart(session_id, request).get('cart', [])
 
         if not cart:
             return Response(

@@ -147,7 +147,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'LOCATION': 'redis://redis:6379/1',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         },
@@ -167,10 +167,8 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
 EMAIL_ADMIN = EMAIL_HOST_USER
 
-
-CELERY_BROKER_URL = 'amqp://admin:admin123@localhost:5672/'
+CELERY_BROKER_URL = 'amqp://admin:admin123@rabbitmq:5672//'
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
-
 
 STRIPE_PUBLISHABLE_KEY = 'pk_test_51Qt7kORiYyj7g4UzlhKRXs5U8EOL5DhXJHtOx215hhE8aEaIaKK6Lf9zxcoQ3WOwRzAEnSCV1szHKGygS3oPBxw900vlMhhqRJ'
 STRIPE_SECRET_KEY = 'sk_test_51Qt7kORiYyj7g4UzkQE4faLxLvyV48cqzcFOjKP7zDC1LTaEat4k53kSS7PzMulxeJIOH7yLdFwhQPFKRv7fmloZ00Kr1d2Ors'

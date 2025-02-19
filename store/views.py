@@ -1,12 +1,10 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
-from rest_framework.response import Response
-from rest_framework import status, viewsets
-from sqlalchemy.ext.horizontal_shard import set_shard_id
+from rest_framework import viewsets
 
 from .models import Product, Category
-from .serializers import ProductListSerializer, ProductDetailSerializer, CategorySerializer
+from .serializers import ProductListSerializer, CategorySerializer, ProductDetailSerializer
 
 
 class ProductApiViewSet(viewsets.ModelViewSet):
@@ -15,6 +13,11 @@ class ProductApiViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ['category']
     search_fields = ['name', 'price']
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return ProductDetailSerializer
+        return super().get_serializer_class()
 
     def get_queryset(self):
         products = super().get_queryset()

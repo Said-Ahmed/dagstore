@@ -1,17 +1,31 @@
-# Используем официальный образ Python 3.12
-FROM python:3.12-slim
+FROM python:3.11-alpine
 
-# Устанавливаем рабочую директорию внутри контейнера
-WORKDIR /usr/src/app
+# Установка зависимостей
+RUN apk update && apk add --no-cache \
+    gcc \
+    musl-dev \
+    postgresql-dev \
+    python3-dev \
+    libffi-dev \
+    openssl-dev \
+    jpeg-dev \
+    zlib-dev
 
-# Копируем файл зависимостей (requirements.txt) в контейнер
-COPY requirements.txt ./
+# Рабочая директория
+WORKDIR /app
 
-# Устанавливаем зависимости
-RUN pip install --no-cache-dir -r requirements.txt
+# Копирование зависимостей
+COPY requirements.txt .
 
-# Копируем все файлы проекта в рабочую директорию контейнера
+# Установка Python зависимостей
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+# Копирование всего проекта
 COPY . .
 
-# Указываем команду для запуска приложения
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Команда для миграций (опционально)
+RUN python manage.py migrate --noinput
+
+
+EXPOSE 8000
