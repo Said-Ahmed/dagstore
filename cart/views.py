@@ -14,7 +14,7 @@ class CartApiViewSet(viewsets.ViewSet):
                     "total_sum": 0.0
                 }
             )
-        cart_data = get_cart(session_id)
+        cart_data = get_cart(session_id, request)
         return JsonResponse(cart_data)
 
     def create(self, request, product_uuid, *args, **kwargs):

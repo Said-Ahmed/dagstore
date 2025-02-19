@@ -10,4 +10,6 @@ urlpatterns = [
     path('products/<uuid:uuid>/<slug:slug>/', views.ProductApiViewSet.as_view({'get': 'retrieve'}), name='product_detail'),
 
     path('products/<slug:category_slug>/', views.ProductApiViewSet.as_view({'get': 'list'}), name='product_list_by_category'),
+
+    path('category/', views.CategoryView.as_view({'get': 'list'}), name='category_list')
 ]

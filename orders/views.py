@@ -9,8 +9,8 @@ from .serializers import OrderCreateSerializer
 from .tasks import order_created
 
 
-class OrderApiView(viewsets.ViewSet):
-    def create(self, request):
+class OrderApiView(viewsets.ModelViewSet):
+    def create(self, request, *args, **kwargs):
         session_id = request.GET.get('session_id')
         cart = get_cart(session_id).get('cart', [])
 

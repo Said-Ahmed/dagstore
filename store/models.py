@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from django.db.models import manager
 from django.urls import reverse
 
 
@@ -11,6 +12,8 @@ class Category(models.Model):
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200,
                             unique=True)
+    image = models.ImageField(upload_to='category/%Y/%m/%d',
+                              blank=True)
 
     class Meta:
         ordering = ['name']
@@ -20,6 +23,8 @@ class Category(models.Model):
 
     verbose_name = 'category'
     verbose_name_plural = 'categories'
+
+    objects: manager
 
     def get_absolute_url(self):
         return reverse('store:product_list_by_category',
@@ -55,6 +60,8 @@ class Product(models.Model):
         blank=True,
         null=True,
     )
+
+    objects: manager
 
     def get_absolute_url(self):
         return reverse('store:product_detail',

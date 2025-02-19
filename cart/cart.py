@@ -2,6 +2,7 @@ import redis
 from django.conf import settings
 from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
+
 from store.models import Product
 import logging
 
@@ -14,7 +15,7 @@ def get_cart_key(session_id):
 
 CART_TTL = 3600 * 24  # 24 часа
 
-def get_cart(session_id):
+def get_cart(session_id, request):
     cart_key = get_cart_key(session_id)
     cart_items = redis_instance.hgetall(cart_key)
 
@@ -33,7 +34,7 @@ def get_cart(session_id):
                 "product": {
                     "uuid": str(product.uuid),
                     "name": product.name,
-                    "image": product.image.url,
+                    "image": request.build_absolute_uri(product.image.url) if product.image.url else None,
                     "weight": product.weight,
                     "price_per_unit": product.price_per_unit * quantity if product.price_per_unit else None,
                     "price": f"{price:.2f}",
@@ -45,7 +46,7 @@ def get_cart(session_id):
 
             total_sum += total_price
         except ObjectDoesNotExist:
-            continue  # Если продукт не найден, просто пропускаем
+            continue
 
     return {
         "cart": result,

@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import manager
 
 from store.models import Product
 
@@ -13,6 +14,8 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)
+
+    objects: manager
 
     class Meta:
         ordering = ['-created']
