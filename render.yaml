@@ -1,0 +1,64 @@
+services:
+  - type: web
+    name: web
+    env: python
+    build:
+      dockerfile: Dockerfile
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: dagstore.settings
+      - key: CELERY_BROKER_URL
+        value: amqp://admin:admin123@your-rabbitmq-url:5672//
+      - key: CELERY_RESULT_BACKEND
+        value: redis://your-redis-url:6379/0
+    port: 8000
+    numInstances: 1
+    healthCheckPath: /healthz
+
+  - type: worker
+    name: celery_worker
+    env: python
+    build:
+      dockerfile: Dockerfile
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: dagstore.settings
+      - key: CELERY_BROKER_URL
+        value: amqp://admin:admin123@your-rabbitmq-url:5672//
+      - key: CELERY_RESULT_BACKEND
+        value: redis://your-redis-url:6379/0
+    command: celery -A dagstore worker -l info
+    numInstances: 1
+
+  - type: worker
+    name: celery_beat
+    env: python
+    build:
+      dockerfile: Dockerfile
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: dagstore.settings
+      - key: CELERY_BROKER_URL
+        value: amqp://admin:admin123@your-rabbitmq-url:5672//
+      - key: CELERY_RESULT_BACKEND
+        value: redis://your-redis-url:6379/0
+    command: celery -A dagstore beat -l info
+    numInstances: 1
+
+  - type: web
+    name: nginx
+    image: nginx:stable-alpine
+    envVars:
+      - key: NGINX_ENVSUBST_TEMPLATE_DIR
+        value: /etc/nginx/templates
+    port: 80
+    numInstances: 1
+    healthCheckPath: /healthz
+    volumes:
+      - name: nginx-config
+        mountPath: /etc/nginx/nginx.conf
+        subPath: nginx.conf
+      - name: static-volume
+        mountPath: /static
+      - name: media-volume
+        mountPath: /media
